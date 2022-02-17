@@ -2,6 +2,7 @@
 using Jwt.Database.Repository;
 using Jwt.Model;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Jwt.Service
@@ -35,6 +36,11 @@ namespace Jwt.Service
 
                 throw ex;
             }
+        }
+
+        public async Task<IEnumerable<Register>> GetUsers()
+        {
+            return await _userRepository.Get();
         }
     }
 }

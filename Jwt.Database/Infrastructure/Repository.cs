@@ -27,5 +27,10 @@ namespace Jwt.Database.Infrastructure
         {
             return await _userContext.Set<T>().Where(expression).FirstOrDefaultAsync();
         }
+
+        public virtual async Task<IEnumerable<T>> Get()
+        {
+            return await _userContext.Set<T>().ToListAsync();
+        }
     }
 }

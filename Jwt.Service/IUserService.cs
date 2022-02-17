@@ -11,5 +11,6 @@ namespace Jwt.Service
     {
         Task<Register> GetUser(string email, string password);
         Task<Register> Add(Register entity);
+        Task<IEnumerable<Register>> GetUsers();
     }
 }

@@ -8,13 +8,13 @@ namespace Jwt.Model
         [Key]
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Please enter Username.")]
         public string UserName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Please enter Email Address.")]
         public string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Please enter Password")]
         public string Password { get; set; }
     }
 }

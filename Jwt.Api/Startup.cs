@@ -1,3 +1,5 @@
+using Hangfire;
+using Hangfire.MemoryStorage;
 using Jwt.Database;
 using Jwt.Database.Infrastructure;
 using Jwt.Database.Repository;
@@ -24,6 +26,7 @@ namespace Jwt.Api
 {
     public class Startup
     {
+        private readonly IUserService _userService;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -41,6 +44,15 @@ namespace Jwt.Api
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserRepository, UserRepository>();
+
+            services.AddCors(c =>
+            {
+                c.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("https://localhost:44348");
+                });
+            });
+
 
             services.AddAuthentication(options =>
             {
@@ -63,15 +75,49 @@ namespace Jwt.Api
                 };
             });
 
-
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Jwt.Api", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Jwt.Api", Version = "v1" 
             });
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Enter 'Bearer' [space] and then your valid token in the text input below.\r\n\r\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\""
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[]{}
+                    }
+                });
+
+
+            });
+
+            services.AddHangfire(config =>
+                   config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                         .UseSimpleAssemblyNameTypeSerializer()
+                         .UseDefaultTypeSerializer()
+                         .UseMemoryStorage());
+            services.AddHangfireServer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IBackgroundJobClient backgroundJobClient, IRecurringJobManager recurringJobManager)
         {
             
 
@@ -86,12 +132,19 @@ namespace Jwt.Api
 
             app.UseRouting();
 
+            app.UseCors();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+            app.UseHangfireDashboard();
+            backgroundJobClient.Enqueue(() => Console.WriteLine("Hello from hangfire.."));
+
+            //recurringJobManager.AddOrUpdate("My Job", () => _userService.GetUsers(), "* * * * *");
         }
     }
 }

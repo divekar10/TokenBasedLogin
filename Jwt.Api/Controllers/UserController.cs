@@ -1,5 +1,7 @@
 ﻿using Jwt.Model;
 using Jwt.Service;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +18,8 @@ namespace Jwt.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors]
+    //[DisableCors]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -28,22 +32,22 @@ namespace Jwt.Api.Controllers
 
         [HttpPost]
         [Route("register")]
+        
         public async Task<IActionResult> Register([FromBody] Register register)
         {
-            Register userRegister = new Register()
+            if (ModelState.IsValid)
             {
-                UserName = register.UserName,
-                Email = register.Email,
-                Password = register.Password
-            };
+                await _userService.Add(register);
 
-            await _userService.Add(userRegister);
-
-            return Ok(new Response { Status = "Success", Message = "User Created Successfull..." });
+                return Ok(new Response { Status = "Success", Message = "User Created Successfull..." });
+            }
+            return BadRequest();
         }
 
         [HttpPost]
         [Route("login")]
+        //[EnableCors("AllowOrigin")]
+        //[DisableCors]
         public async Task<IActionResult> Login([FromBody] Login model)
         {
             var user = await _userService.GetUser(model.Email, model.Password);
@@ -54,6 +58,7 @@ namespace Jwt.Api.Controllers
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim("UserId", Convert.ToString(user.Id), ClaimValueTypes.Integer),
+                    new Claim("Email",user.Email, ClaimValueTypes.String),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
 
@@ -74,6 +79,13 @@ namespace Jwt.Api.Controllers
                 });
             }
             return Unauthorized();
+        }
+
+        [HttpGet]
+        [Route("Users")]
+        public async Task<IEnumerable<Register>> Get()
+        {
+            return await _userService.GetUsers();
         }
     }
 }
