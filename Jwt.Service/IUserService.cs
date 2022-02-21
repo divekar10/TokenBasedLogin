@@ -1,4 +1,5 @@
 ﻿using Jwt.Model;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,7 @@ namespace Jwt.Service
         Task<Register> GetUser(string email, string password);
         Task<Register> Add(Register entity);
         Task<IEnumerable<Register>> GetUsers();
+        //FileContentResult Export();
+        string Colors();
     }
 }

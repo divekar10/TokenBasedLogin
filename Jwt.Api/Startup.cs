@@ -26,7 +26,8 @@ namespace Jwt.Api
 {
     public class Startup
     {
-        private readonly IUserService _userService;
+        private static IUserRepository userRepository;
+        private readonly UserService job = new UserService(userRepository);
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -144,7 +145,9 @@ namespace Jwt.Api
             app.UseHangfireDashboard();
             backgroundJobClient.Enqueue(() => Console.WriteLine("Hello from hangfire.."));
 
-            //recurringJobManager.AddOrUpdate("My Job", () => _userService.GetUsers(), "* * * * *");
+            recurringJobManager.AddOrUpdate("My Job", () => Console.WriteLine(job.Colors()), "* * * * *");
+            //recurringJobManager.AddOrUpdate("My Job", () => , "* * * * *");
+            //recurringJobManager.AddOrUpdate("My Job", () => Console.Write("Hello"), "* * * * *");
         }
     }
 }

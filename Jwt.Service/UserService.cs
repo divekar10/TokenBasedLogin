@@ -1,8 +1,11 @@
-﻿using Jwt.Database.Infrastructure;
+﻿using ClosedXML.Excel;
+using Jwt.Database.Infrastructure;
 using Jwt.Database.Repository;
 using Jwt.Model;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Jwt.Service
@@ -23,6 +26,25 @@ namespace Jwt.Service
             user.Password = entity.Password;
             return await _userRepository.AddAsync(entity);
 
+        }
+
+        public string Colors()
+        {
+            var colors = new List<string>();
+            var result = "";
+            colors.Add("Red");
+            colors.Add("Green");
+            colors.Add("Pink");
+            colors.Add("Orange");
+            colors.Add("Purple");
+            colors.Add("Yellow");
+
+            foreach (var item in colors)
+            {
+                result += " "+ item.ToString();
+            }
+
+            return result;
         }
 
         public async Task<Register> GetUser(string email, string password)

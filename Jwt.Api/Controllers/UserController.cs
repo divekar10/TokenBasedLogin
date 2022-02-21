@@ -87,5 +87,12 @@ namespace Jwt.Api.Controllers
         {
             return await _userService.GetUsers();
         }
+
+        [HttpGet]
+        [Route("HangFireJob")]
+        public string HangFireJob()
+        {
+            return _userService.Colors();
+        }
     }
 }
