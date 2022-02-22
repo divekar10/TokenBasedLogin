@@ -54,6 +54,8 @@ namespace Jwt.Api
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+            services.AddScoped<IUserProfileService, UserProfileService>();
 
             services.AddCors(c =>
             {

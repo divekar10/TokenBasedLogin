@@ -70,5 +70,6 @@ namespace Jwt.Service
              IEnumerable<Register> register = await _userRepository.AddAsync(entities);
             return register;
         }
+
     }
 }

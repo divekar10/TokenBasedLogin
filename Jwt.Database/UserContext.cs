@@ -13,5 +13,6 @@ namespace Jwt.Database
         }
 
         public DbSet<Register> Register { get; set; }
+        public DbSet<Users> Users { get; set; }
     }
 }
