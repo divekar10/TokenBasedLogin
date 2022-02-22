@@ -2,6 +2,7 @@
 using Jwt.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,36 +21,43 @@ namespace Jwt.Api.Controllers
             _userService = userService;
         }
 
-        protected FileContentResult Export()
+        protected FileStreamResult Export<T>(IEnumerable<T> list)
         {
-            using (var workbook = new XLWorkbook())
-            {
-                var worksheet = workbook.Worksheets.Add("Colors");
-                var currentCell = 1;
-                #region Header
+            //using (var workbook = new XLWorkbook())
+            //{
+            //    var worksheet = workbook.Worksheets.Add("Colors");
+            //    var currentCell = 1;
+            //    #region Header
 
-                worksheet.Cell(currentCell, 1).Value = "Colors";
+            //    worksheet.Cell(currentCell, 1).Value = "Colors";
 
-                #endregion
+            //    #endregion
 
-                #region Body
+            //    #region Body
 
-                worksheet.Cell(currentCell, 1).Value = _userService.Colors();
+            //var result = _userService.GetUsers();
+                
 
-                #endregion
+                //#endregion
 
-                using (var stream = new MemoryStream())
+                var stream = new MemoryStream();
+
+                using (var excle = new ExcelPackage(stream))
                 {
-                    workbook.SaveAs(stream);
-                    var result = stream.ToArray();
-
-                    return File(
-                        result,
-                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        "Colors.xlsx"
-                        );
+                var workSheet = excle.Workbook.Worksheets.Add("User List");
+                workSheet.Cells.LoadFromCollection(list, true);
+                workSheet.Cells[workSheet.Dimension.Address].AutoFitColumns();
+                excle.SaveAs(stream);
+                //workbook.SaveAs(stream);
+                //var result = stream.;
                 }
-            }
+                stream.Position = 0;
+
+                 return File(
+                        stream,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "Users.xlsx"
+                        ); 
         }
     }
 }

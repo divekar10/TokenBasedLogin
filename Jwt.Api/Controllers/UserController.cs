@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Web.Helpers;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -32,7 +35,6 @@ namespace Jwt.Api.Controllers
 
         [HttpPost]
         [Route("register")]
-        
         public async Task<IActionResult> Register([FromBody] Register register)
         {
             if (ModelState.IsValid)
@@ -83,9 +85,65 @@ namespace Jwt.Api.Controllers
 
         [HttpGet]
         [Route("Users")]
+        [Produces(typeof(IEnumerable<Register>))]
         public async Task<IEnumerable<Register>> Get()
         {
             return await _userService.GetUsers();
+        }
+
+        [HttpPost]
+        [Route("Import/Users"), DisableRequestSizeLimit]
+        public async Task<IEnumerable<Register>> ImportUsers(IFormFile file)
+        {
+            try
+            {
+
+                if (file == null || file.Length == 0)
+                {
+                    return null;
+                }
+
+                var path = Path.Combine(
+                                Directory.GetCurrentDirectory(), "wwwroot",
+                                file.FileName);
+
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                //var file = HttpContext.Request.Form.Files[0];
+                var list = new List<Register>();
+
+            using(var stream = new MemoryStream())
+            {
+                await file.CopyToAsync(stream);
+
+                using(var excel = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = excel.Workbook.Worksheets[0];
+
+                    var rowCount = worksheet.Dimension.Rows;
+
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                            list.Add(new Register
+                            {
+                                UserName = Convert.ToString(worksheet.Cells[row, 1].Value),
+                                Email = Convert.ToString(worksheet.Cells[row, 2].Value),
+                                Password = Convert.ToString(worksheet.Cells[row, 3].Value)
+                            });
+                        
+                    }
+                }
+            }
+                return await _userService.AddUsers(list);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         [HttpGet]
@@ -93,6 +151,25 @@ namespace Jwt.Api.Controllers
         public string HangFireJob()
         {
             return _userService.Colors();
+        }
+
+        [HttpPost]
+        [Route("UploadFile")]
+        public async Task<IActionResult> FileUpload(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return Content("File not selected..");
+
+            var path = Path.Combine(
+                Directory.GetCurrentDirectory(), "wwwroot",
+                file.FileName);
+
+            using(var stream = new FileStream(path, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return Ok();
         }
     }
 }

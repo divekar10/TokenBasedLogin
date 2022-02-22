@@ -64,5 +64,11 @@ namespace Jwt.Service
         {
             return await _userRepository.Get();
         }
+
+        public async Task<IEnumerable<Register>> AddUsers(List<Register> entities)
+        {
+             IEnumerable<Register> register = await _userRepository.AddAsync(entities);
+            return register;
+        }
     }
 }

@@ -12,6 +12,8 @@ namespace Jwt.Service
     {
         Task<Register> GetUser(string email, string password);
         Task<Register> Add(Register entity);
+
+        Task<IEnumerable<Register>> AddUsers(List<Register> entities);
         Task<IEnumerable<Register>> GetUsers();
         //FileContentResult Export();
         string Colors();

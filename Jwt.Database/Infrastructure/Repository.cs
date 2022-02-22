@@ -23,6 +23,13 @@ namespace Jwt.Database.Infrastructure
             return entity;
         }
 
+        public async virtual Task<List<T>> AddAsync(List<T> entity)
+        {
+            await _userContext.AddRangeAsync(entity);
+            await _userContext.SaveChangesAsync();
+            return entity;
+        }
+
         public virtual async Task<T> GetDefault(Expression<Func<T, bool>> expression)
         {
             return await _userContext.Set<T>().Where(expression).FirstOrDefaultAsync();
