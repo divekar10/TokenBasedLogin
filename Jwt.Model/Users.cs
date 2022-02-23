@@ -10,7 +10,7 @@ namespace Jwt.Model
     public class Users
     {
         [Key]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [Required(ErrorMessage ="Please Enter First Name")]
         public string FirstName { get; set; }
