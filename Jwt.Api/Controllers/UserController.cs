@@ -22,8 +22,9 @@ namespace Jwt.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors]
+    [Authorize]
     //[DisableCors]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
         private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
@@ -35,6 +36,7 @@ namespace Jwt.Api.Controllers
 
         [HttpPost]
         [Route("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] Register register)
         {
             if (ModelState.IsValid)
@@ -48,8 +50,10 @@ namespace Jwt.Api.Controllers
 
         [HttpPost]
         [Route("login")]
+        [AllowAnonymous]
         //[EnableCors("AllowOrigin")]
         //[DisableCors]
+
         public async Task<IActionResult> Login([FromBody] Login model)
         {
             var user = await _userService.GetUser(model.Email, model.Password);
@@ -170,6 +174,23 @@ namespace Jwt.Api.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("PagedResult")]
+        public IActionResult GetUsersPagination([FromQuery] PagedParameters pagedParameters)
+        {
+            var users =  _userService.AllUsers(pagedParameters);
+
+            return Ok(users);
+        }
+
+        [HttpGet]
+        [Route("PagedResultUsingSP")]
+        public async Task<IActionResult> GetAllUsers(int from, int to)
+        {
+            var users = await _userService.GetAllUsers(from, to);
+            return JsonResponse(users);
         }
     }
 }

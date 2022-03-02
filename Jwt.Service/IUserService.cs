@@ -18,7 +18,10 @@ namespace Jwt.Service
         Task<IEnumerable<Register>> AddUsers(List<Register> entities);
         //Task<IEnumerable<User>> UserWithProfile(List<User> entities);
         Task<IEnumerable<Register>> GetUsers();
+        IEnumerable<Register> AllUsers(PagedParameters pagedParameters);
         //FileContentResult Export();
+        //public IEnumerable<Register> AllUsers();
+        Task<IEnumerable<Register>> GetAllUsers(int from, int to);
         string Colors();
     }
 }

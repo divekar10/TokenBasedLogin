@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Jwt.Service
@@ -71,5 +72,24 @@ namespace Jwt.Service
             return register;
         }
 
+        public IEnumerable<Register> AllUsers(PagedParameters pagedParameters)
+        {
+            return _userRepository.FindAll()
+                                  .OrderBy(user => user.Id)
+                                  .Skip((pagedParameters.PageNumber - 1) * pagedParameters.PageSize)
+                                  .Take(pagedParameters.PageSize)
+                                  .ToList();
+        }
+
+        public async Task<IEnumerable<Register>> GetAllUsers(int from, int to)
+        {
+            IEnumerable<Register> users = await _userRepository.GetUsers(from, to);
+            return users;
+        }
+
+        //public IEnumerable<Register> GetUsersPaged(PagedParameters pagedParameters)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

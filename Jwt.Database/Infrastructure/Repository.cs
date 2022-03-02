@@ -39,5 +39,10 @@ namespace Jwt.Database.Infrastructure
         {
             return await _userContext.Set<T>().ToListAsync();
         }
+
+        public IQueryable<T> FindAll()
+        {
+            return _userContext.Set<T>();
+        }
     }
 }

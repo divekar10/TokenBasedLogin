@@ -13,5 +13,6 @@ namespace Jwt.Database.Infrastructure
         Task<List<T>> AddAsync(List<T> entity);
         Task<T> GetDefault(Expression<Func<T, bool>> expression);
         Task<IEnumerable<T>> Get();
+        IQueryable<T> FindAll();
     }
 }

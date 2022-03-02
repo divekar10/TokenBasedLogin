@@ -1,5 +1,6 @@
 ﻿using Jwt.Model;
 using Jwt.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,7 @@ namespace Jwt.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors]
+    [Authorize]
     public class UserProfileController : ControllerBase
     {
         private IUserProfileService _userProfileService; 
@@ -30,7 +32,7 @@ namespace Jwt.Api.Controllers
                 return null;
 
             var path = Path.Combine(
-                Directory.GetCurrentDirectory(), "wwwroot/Photos",
+                Directory.GetCurrentDirectory(), "wwwroot\\Photos",
                 file.file.FileName);
 
             using (var stream = new FileStream(path, FileMode.Create))

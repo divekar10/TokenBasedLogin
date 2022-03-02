@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using Jwt.Database.Utility;
 using Jwt.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +16,16 @@ namespace Jwt.Api.Controllers
     [ApiController]
     public class BaseController : ControllerBase
     {
-        protected readonly IUserService _userService;
-        public BaseController(IUserService userService)
+        //protected readonly IUserService _userService;
+        public BaseController()
         {
-            _userService = userService;
+            //_userService = userService;
         }
 
+        protected IActionResult JsonResponse(object obj) => (obj != null) ? NSResponse(obj) : NSNotFound;
+
+        protected OkObjectResult NSResponse(object obj) => Ok(new { Status = APIDefaultMessages.Success, Code = 200, ResponseData = obj });
+        protected NotFoundObjectResult NSNotFound => NotFound(new { Status = APIDefaultMessages.RecordNotFound, Code = 401, ReposponseData = new object() });
         protected FileStreamResult Export<T>(IEnumerable<T> list)
         {
             //using (var workbook = new XLWorkbook())

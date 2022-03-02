@@ -1,28 +1,21 @@
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Jwt.Database;
-using Jwt.Database.Infrastructure;
 using Jwt.Database.Repository;
 using Jwt.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Jwt.Api
 {
@@ -50,7 +43,7 @@ namespace Jwt.Api
 
             services.AddControllers();
 
-            services.AddDbContext<UserContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Con")));
+            services.AddDbContext<UserContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionString")));
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserRepository, UserRepository>();
@@ -64,7 +57,6 @@ namespace Jwt.Api
                     builder.WithOrigins("https://localhost:44348");
                 });
             });
-
 
             services.AddAuthentication(options =>
             {
@@ -89,8 +81,11 @@ namespace Jwt.Api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Jwt.Api", Version = "v1" 
-            });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Jwt.Api",
+                    Version = "v1"
+                });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
@@ -131,7 +126,7 @@ namespace Jwt.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IBackgroundJobClient backgroundJobClient, IRecurringJobManager recurringJobManager)
         {
-            
+
 
             if (env.IsDevelopment())
             {
@@ -153,6 +148,8 @@ namespace Jwt.Api
             app.UseRouting();
 
             app.UseCors();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

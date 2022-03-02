@@ -1,5 +1,6 @@
 ﻿using Jwt.Model;
 using Jwt.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,12 +12,13 @@ namespace Jwt.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ExportController : BaseController
     {
-        //private readonly IUserService _userService;
-        public ExportController(IUserService userService) : base(userService)
+        private readonly IUserService _userService;
+        public ExportController(IUserService userService) 
         {
-            //_userService = userService;
+            _userService = userService;
         }
 
         [HttpGet]
