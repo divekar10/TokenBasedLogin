@@ -7,7 +7,7 @@ namespace Jwt.Database
 {
     public class UserContext : DbContext
     {
-        public UserContext(DbContextOptions<UserContext> options) : base(options)
+        public UserContext(DbContextOptions options) : base(options)
         {
 
         }

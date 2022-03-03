@@ -1,4 +1,5 @@
 ﻿using Jwt.Model;
+using Jwt.Model.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -21,7 +22,7 @@ namespace Jwt.Service
         IEnumerable<Register> AllUsers(PagedParameters pagedParameters);
         //FileContentResult Export();
         //public IEnumerable<Register> AllUsers();
-        Task<IEnumerable<Register>> GetAllUsers(int from, int to);
+        Task<IEnumerable<UserDto>> GetAllUsers(int pageIndex, int pageSize, int recordCount);
         string Colors();
     }
 }

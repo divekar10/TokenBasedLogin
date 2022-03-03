@@ -2,6 +2,7 @@
 using Jwt.Database.Infrastructure;
 using Jwt.Database.Repository;
 using Jwt.Model;
+using Jwt.Model.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -81,9 +82,9 @@ namespace Jwt.Service
                                   .ToList();
         }
 
-        public async Task<IEnumerable<Register>> GetAllUsers(int from, int to)
+        public async Task<IEnumerable<UserDto>> GetAllUsers(int pageIndex, int pageSize, int recordCount)
         {
-            IEnumerable<Register> users = await _userRepository.GetUsers(from, to);
+            IEnumerable<UserDto> users = await _userRepository.GetUsers(pageIndex, pageSize, recordCount);
             return users;
         }
 

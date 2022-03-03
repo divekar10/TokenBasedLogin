@@ -26,25 +26,10 @@ namespace Jwt.Api.Controllers
 
         protected OkObjectResult NSResponse(object obj) => Ok(new { Status = APIDefaultMessages.Success, Code = 200, ResponseData = obj });
         protected NotFoundObjectResult NSNotFound => NotFound(new { Status = APIDefaultMessages.RecordNotFound, Code = 401, ReposponseData = new object() });
+
         protected FileStreamResult Export<T>(IEnumerable<T> list)
         {
-            //using (var workbook = new XLWorkbook())
-            //{
-            //    var worksheet = workbook.Worksheets.Add("Colors");
-            //    var currentCell = 1;
-            //    #region Header
-
-            //    worksheet.Cell(currentCell, 1).Value = "Colors";
-
-            //    #endregion
-
-            //    #region Body
-
-            //var result = _userService.GetUsers();
-                
-
-                //#endregion
-
+  
                 var stream = new MemoryStream();
 
                 using (var excle = new ExcelPackage(stream))
@@ -53,8 +38,6 @@ namespace Jwt.Api.Controllers
                 workSheet.Cells.LoadFromCollection(list, true);
                 workSheet.Cells[workSheet.Dimension.Address].AutoFitColumns();
                 excle.SaveAs(stream);
-                //workbook.SaveAs(stream);
-                //var result = stream.;
                 }
                 stream.Position = 0;
 

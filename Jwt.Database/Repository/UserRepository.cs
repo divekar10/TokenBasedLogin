@@ -1,5 +1,6 @@
 ﻿using Jwt.Database.Infrastructure;
 using Jwt.Model;
+using Jwt.Model.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -11,7 +12,7 @@ namespace Jwt.Database.Repository
 {
     public interface IUserRepository : IRepository<Register>
     {
-        Task<IEnumerable<Register>> GetUsers(int from, int to);
+        Task<IEnumerable<UserDto>> GetUsers(int pageIndex, int pageSize, int recordCount);
     }
 
     public class UserRepository : Repository<Register>, IUserRepository
@@ -21,15 +22,16 @@ namespace Jwt.Database.Repository
               
         }
 
-        public async Task<IEnumerable<Register>> GetUsers(int from, int to)
+        public async Task<IEnumerable<UserDto>> GetUsers(int pageIndex, int pageSize, int recordCount)
         {
             var _param = new List<SqlParameter>
                 {
-                  new SqlParameter("@From", from),
-                  new SqlParameter("@To", to)
+                  new SqlParameter("@PageIndex", pageIndex),
+                  new SqlParameter("@PageSize", pageSize),
+                  new SqlParameter("@RecordCount", recordCount)
                 };
 
-            IEnumerable<Register> users = await SQLHelper.CGetData<Register>("SP_GetUsers", _param);
+            IEnumerable<UserDto> users = await SQLHelper.CGetData<UserDto>("SP_GetUsers", _param);
             return users;
         }
     }

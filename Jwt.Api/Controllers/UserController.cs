@@ -181,15 +181,14 @@ namespace Jwt.Api.Controllers
         public IActionResult GetUsersPagination([FromQuery] PagedParameters pagedParameters)
         {
             var users =  _userService.AllUsers(pagedParameters);
-
             return Ok(users);
         }
 
         [HttpGet]
         [Route("PagedResultUsingSP")]
-        public async Task<IActionResult> GetAllUsers(int from, int to)
+        public async Task<IActionResult> GetAllUsers(int pageIndex, int pageSize, int recordCount)
         {
-            var users = await _userService.GetAllUsers(from, to);
+            var users = await _userService.GetAllUsers(pageIndex, pageSize, recordCount);
             return JsonResponse(users);
         }
     }

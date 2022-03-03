@@ -10,39 +10,42 @@ namespace Jwt.Database.Infrastructure
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly UserContext _userContext;
+        //private readonly UserContext _userContext;
+        protected UserContext UserContext { get; set; }
+        public string connectionString = string.Empty;
         public Repository(UserContext userContext)
         {
-            _userContext = userContext;
+            this.UserContext = userContext;
+            SQLHelper.ConnectionString = UserContext.Database.GetDbConnection().ConnectionString;
         }
 
         public virtual async Task<T> AddAsync(T entity)
         {
-            await _userContext.AddAsync<T>(entity);
-            await _userContext.SaveChangesAsync();
+            await UserContext.AddAsync<T>(entity);
+            await UserContext.SaveChangesAsync();
             return entity;
         }
 
         public async virtual Task<List<T>> AddAsync(List<T> entity)
         {
-            await _userContext.AddRangeAsync(entity);
-            await _userContext.SaveChangesAsync();
+            await UserContext.AddRangeAsync(entity);
+            await UserContext.SaveChangesAsync();
             return entity;
         }
 
         public virtual async Task<T> GetDefault(Expression<Func<T, bool>> expression)
         {
-            return await _userContext.Set<T>().Where(expression).FirstOrDefaultAsync();
+            return await UserContext.Set<T>().Where(expression).FirstOrDefaultAsync();
         }
 
         public virtual async Task<IEnumerable<T>> Get()
         {
-            return await _userContext.Set<T>().ToListAsync();
+            return await UserContext.Set<T>().ToListAsync();
         }
 
         public IQueryable<T> FindAll()
         {
-            return _userContext.Set<T>();
+            return UserContext.Set<T>();
         }
     }
 }
