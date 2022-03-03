@@ -22,12 +22,7 @@ namespace Jwt.Service
 
         public async Task<Register> Add(Register entity)
         {
-            var user = new Register();
-            user.UserName = entity.UserName;
-            user.Email = entity.Email;
-            user.Password = entity.Password;
             return await _userRepository.AddAsync(entity);
-
         }
 
         public string Colors()
@@ -87,10 +82,5 @@ namespace Jwt.Service
             IEnumerable<UserDto> users = await _userRepository.GetUsers(pageIndex, pageSize, recordCount);
             return users;
         }
-
-        //public IEnumerable<Register> GetUsersPaged(PagedParameters pagedParameters)
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }
