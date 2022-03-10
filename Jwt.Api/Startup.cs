@@ -58,6 +58,25 @@ namespace Jwt.Api
                 });
             });
 
+            //services.AddAuthorization(config => 
+            //{
+            //    config.AddPolicy("IsNormalUser", options =>
+            //    {
+            //        options.RequireAuthenticatedUser();
+            //        options.AuthenticationSchemes.Add(
+            //            JwtBearerDefaults.AuthenticationScheme);
+            //        options.Requirements.Add(new IsNormalUserRequirement());
+            //    });
+
+            //    config.AddPolicy("IsAdmin", options =>
+            //    {
+            //        options.RequireAuthenticatedUser();
+            //        options.AuthenticationSchemes.Add(
+            //            JwtBearerDefaults.AuthenticationScheme);
+            //        options.Requirements.Add(new IsAdminRequirement());
+            //    });
+            //});
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

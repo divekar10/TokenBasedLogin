@@ -191,5 +191,16 @@ namespace Jwt.Api.Controllers
             var users = await _userService.GetAllUsers(pageIndex, pageSize, recordCount);
             return JsonResponse(users);
         }
+
+        [HttpPost]
+        [Route("GetProducts")]
+        public List<Product> GetProducts(Product product)
+        {
+            var result = new List<Product>()
+            {
+                new Product{ Id = product.Id, Name = product.Name}
+            };
+            return result;
+        }
     }
 }
