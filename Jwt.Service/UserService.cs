@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 using Jwt.Database.Infrastructure;
 using Jwt.Database.Repository;
+using Jwt.Exceptions;
 using Jwt.Model;
 using Jwt.Model.DTOs;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,17 @@ namespace Jwt.Service
 
         public async Task<Register> Add(Register entity)
         {
-            return await _userRepository.AddAsync(entity);
+            try
+            {
+                return await _userRepository.AddAsync(entity);
+            }
+            catch (Exception ex)
+            {
+
+                ExceptionLogging.LogExceptionToDb(ex);
+                throw ex;
+            }
+           
         }
 
         public string Colors()

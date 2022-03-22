@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Jwt.Database\Jwt.Database.csproj" />
+    <ProjectReference Include="..\Jwt.Exceptions\Jwt.Exceptions.csproj" />
   </ItemGroup>
 
 </Project>
