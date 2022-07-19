@@ -87,12 +87,28 @@ namespace Jwt.Api.Controllers
             return Unauthorized();
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("Users")]
         [Produces(typeof(IEnumerable<Register>))]
-        public async Task<IEnumerable<Register>> Get()
+        //public async Task<IEnumerable<Register>> Get()
+          public async Task<IActionResult> Get()
         {
-            return await _userService.GetUsers();
+
+            Response.StatusCode = 200;
+            Response.ContentType = "text/event-stream";
+            Response.ContentLength = 10;
+
+            var sw = new StreamWriter(Response.Body);
+
+            for (int i = 0; i < 10; i++)
+            {
+                await Task.Delay(1000);
+                await sw.WriteAsync("1");
+                await sw.FlushAsync();
+            }
+
+            return Ok();
+            //await _userService.GetUsers();
         }
 
         [HttpPost]

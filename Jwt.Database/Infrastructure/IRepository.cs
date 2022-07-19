@@ -14,5 +14,6 @@ namespace Jwt.Database.Infrastructure
         Task<T> GetDefault(Expression<Func<T, bool>> expression);
         Task<IEnumerable<T>> Get();
         IQueryable<T> FindAll();
+        Task<T> GetById(int id);
     }
 }

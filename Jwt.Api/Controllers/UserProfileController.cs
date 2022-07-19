@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,8 +16,8 @@ namespace Jwt.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors]
-    [Authorize]
-    public class UserProfileController : ControllerBase
+    //[Authorize]
+    public class UserProfileController : BaseController
     {
         private IUserProfileService _userProfileService; 
         public UserProfileController(IUserProfileService userProfileService)
@@ -26,9 +27,14 @@ namespace Jwt.Api.Controllers
 
         [HttpPost]
         [Route("UploadUserWithProfile")]
-        public async Task<Users> AddUserWithProfile([FromForm] FileDataDTO file)
+        //[AllowAnonymous]
+        public async Task<IActionResult> AddUserWithProfile([FromForm] FileDataDTO file)
         {
-            if (file.file == null || file.file.Length == 0)
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+                if (file.file == null || file.file.Length == 0)
                 return null;
 
             var path = Path.Combine(
@@ -46,7 +52,17 @@ namespace Jwt.Api.Controllers
             userData.DOB = file.User.DOB;
             userData.PhotoPath = path.Trim().ToString();
 
-            return await _userProfileService.AddUserWithProfile(userData);
+            return Ok(await _userProfileService.AddUserWithProfile(userData));
+        }
+
+        [HttpGet,DisableRequestSizeLimit]
+        [Route("Download/Profile/{id}")]
+        public async Task<IActionResult> DownloadProfilePicture(int id)
+        {
+            var user = await _userProfileService.GetUserById(id);
+            if (user != null)
+                return await Download(user.PhotoPath);
+            return NotFound();
         }
     }
 }

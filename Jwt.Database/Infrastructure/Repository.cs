@@ -47,5 +47,10 @@ namespace Jwt.Database.Infrastructure
         {
             return UserContext.Set<T>();
         }
+
+        public async Task<T> GetById(int id)
+        {
+            return await UserContext.Set<T>().FindAsync(id);
+        }
     }
 }
